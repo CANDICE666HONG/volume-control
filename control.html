@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div class='wrap'>
+      <div id='control'>
+              <img src="https://ae01.alicdn.com/kf/H74d4259e3ff14ace8dd07de599bcced8p.png" alt="volume">
+
+      </div>
+          <span id="num"></span>
+<video id="video" autoplay name="media">
+      <source src="http://music.163.com/song/media/outer/url?id=1313107767" type="audio/mpeg">
+    </video>
+    </div>
+  </body>
+</html>
+<style>
+  html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .wrap {
+      display: inline-block;
+      position: relative;
+      top: 200px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      /* width: 100%; */
+      /* max-width: 200px;
+      max-height: 200px; */
+/*       border: 1px solid red; */
+      margin: 10px auto;
+    }
+    img {
+      position: absolute;
+      z-index: 999;
+      bottom: 0;
+      left: 0;
+      width: 3.125rem;
+      cursor: pointer;
+    }
+    .bubble {
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      right: -15px;
+      width: 10px;
+      height: 10px;
+      border: 1px solid #09f;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px #ccc;
+    }
+    #video {
+      width: 50px;
+    }
+    #num {
+      position: absolute;
+      z-index: 999;
+      bottom: -80px;
+      left: 0;
+    }
+    </style>
+    <script>
+       const bubble = document.createElement('div')
+    bubble.className = 'bubble'
+    const bubbles = document.getElementsByClassName('bubble')
+    const control = document.getElementById('control')
+    const video = document.getElementById('video')
+    const img = document.getElementsByTagName('img')[0]
+    const span = document.getElementById('num')
+    const pn = img.parentNode
+    let time = ''
+    // const bubble = document.getElementsByClassName('bubble')
+    let i = 0
+    let cv = 1
+    let ccv = 10
+    let volume = 0
+    let t = 0
+    let right = 0
+
+    video.volume = 0
+    span.innerHTML = `volume：${Math.round(video.volume)}`
+    img.addEventListener('click', c)
+    img.addEventListener('dblclick', cc)
+
+    function c() {
+      // console.log(1)
+      clearTimeout(time)
+      time = setTimeout(() => {
+        // bubble
+        const bubble = document.createElement('div')
+        bubble.className = 'bubble'
+        bubble.ctype = 'c'
+        pn.insertBefore(bubble, img.nextSiblings)
+        t -= 15
+        right -= 40
+        bubble.style.top = t + 'px'
+        bubble.style.right = right + 'px'
+        // volume
+        volume += cv
+        video.volume = volume/100
+        span.innerHTML = `volume：${Math.round(video.volume * 100)}`
+        del()
+      }, 500)
+    }
+    function cc() {
+      clearTimeout(time)
+      // bubble
+      const bubble = document.createElement('div')
+      bubble.className = 'bubble'
+      bubble.ctype = 'cc'
+      bubble.style.transform = 'scale(2)'
+      pn.insertBefore(bubble, img.nextSiblings)
+      t -= 15
+      right -= 40
+      bubble.style.top = t + 'px'
+      bubble.style.right = right + 'px'
+      // volume
+      volume += ccv
+      video.volume = volume/100
+      // console.log(video.volume)
+      span.innerHTML = `volume：${Math.round(video.volume * 100)}`
+      del()
+    }
+    function del() {
+      Object.values(bubbles).forEach(i => {
+          i.onclick = function() {
+            try {
+              if (this.ctype === 'c') {
+              // console.log(this)
+              volume -= cv
+              video.volume = volume/100
+              span.innerHTML = `volume：${Math.round(video.volume * 100)}`
+              this.parentNode.removeChild(this)
+              t += 15
+              right += 40
+              } else if (this.ctype === 'cc') {
+                // console.log(video.volume)
+                volume -= ccv
+                video.volume = volume/100
+                // console.log(video.volume)
+                span.innerHTML = `volume：${Math.round(video.volume * 100)}`
+                this.parentNode.removeChild(this)
+                t += 15
+                right += 40
+              }
+            } catch(err) {
+              // this.parentNode.removeChild(this)
+              video.volume = 0
+              span.innerHTML = `volume：${Math.round(video.volume * 100)}`
+            }
+          }
+      })
+    }
+    </script>
